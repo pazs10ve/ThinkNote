@@ -61,5 +61,5 @@ Refer to the [deployment guide](docs/deployment.md) for full production instruct
 
 ---
 
-## � Project Status
-ThinkNote is currently at **Version 1.0 (Stable)**. It is fully deployed, verified, and ready for use in the production workshop. �🏗️
+##  Project Status
+ThinkNote is currently at **Version 1.0 (Stable)**. It is fully deployed, verified, and ready for use in the production workshop. 
