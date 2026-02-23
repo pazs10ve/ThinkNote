@@ -1,0 +1,9 @@
+<div class="pagination">
+  <% if (page > 1) { %>
+    <a href="?page=<%= page - 1 %><%= typeof activeTag !== 'undefined' && activeTag ? '&tag=' + activeTag : '' %>" class="page-btn">← Prev</a>
+  <% } %>
+  <span class="page-info">Page <%= page %> of <%= pages %></span>
+  <% if (page < pages) { %>
+    <a href="?page=<%= page + 1 %><%= typeof activeTag !== 'undefined' && activeTag ? '&tag=' + activeTag : '' %>" class="page-btn">Next →</a>
+  <% } %>
+</div>

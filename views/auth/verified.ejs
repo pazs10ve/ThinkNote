@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" /><link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body class="auth-page">
+  <%- include('../partials/nav') %>
+  <main class="auth-main">
+    <div class="auth-card" style="text-align:center">
+      <div class="auth-header">
+        <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+        <h1>Email Verified!</h1>
+        <p>Your account is now active. You're ready to start writing.</p>
+      </div>
+      <a href="/auth/login" class="btn btn-primary" style="margin-top:1.5rem">Sign In Now →</a>
+    </div>
+  </main>
+</body>
+</html>

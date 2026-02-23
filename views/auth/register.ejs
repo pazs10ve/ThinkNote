@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body class="auth-page">
+  <%- include('../partials/nav') %>
+  <main class="auth-main">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="/" class="auth-logo">ThinkNote</a>
+        <h1>Create your account</h1>
+        <p>Start writing and building your audience.</p>
+      </div>
+
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+      <form method="POST" action="/auth/register" class="auth-form">
+        <div class="form-group">
+          <label for="displayName">Full Name</label>
+          <input type="text" id="displayName" name="displayName" value="<%= values.displayName || '' %>" placeholder="Ada Lovelace" required />
+        </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" value="<%= values.username || '' %>" placeholder="ada_lovelace" pattern="[a-zA-Z0-9_]+" minlength="3" maxlength="30" required />
+          <small>Letters, numbers, underscores only</small>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="<%= values.email || '' %>" placeholder="ada@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="At least 8 characters" minlength="8" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+      </form>
+
+      <p class="auth-switch">Already have an account? <a href="/auth/login">Sign in →</a></p>
+    </div>
+  </main>
+  <script src="/js/main.js"></script>
+</body>
+</html>

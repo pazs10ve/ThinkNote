@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body>
+<%- include('../partials/nav') %>
+<main class="main-content">
+  <div class="container" style="max-width:720px">
+    <h1 style="font-size:1.5rem;margin-bottom:2rem">Account Settings</h1>
+
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
+    <!-- Avatar -->
+    <div class="card" style="margin-bottom:1.5rem">
+      <h2 style="font-size:1.05rem;margin-bottom:1rem">Profile Photo</h2>
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+        <img id="avatarPreview" src="<%= currentUser.avatarUrl || '/img/default-avatar.png' %>"
+             style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border)" alt="avatar" />
+        <form action="/settings/avatar" method="POST" enctype="multipart/form-data">
+          <input type="file" name="avatar" id="avatarInput" accept="image/*" style="display:none" onchange="this.form.submit()" />
+          <label for="avatarInput" class="btn btn-outline btn-sm" style="cursor:pointer">Change Photo</label>
+        </form>
+      </div>
+    </div>
+
+    <!-- Profile info -->
+    <form action="/settings" method="POST" class="card" style="margin-bottom:1.5rem">
+      <h2 style="font-size:1.05rem;margin-bottom:1.25rem">Profile Info</h2>
+      <div class="form-group">
+        <label for="displayName">Display Name</label>
+        <input type="text" id="displayName" name="displayName" value="<%= currentUser.displayName %>" required maxlength="60" />
+      </div>
+      <div class="form-group">
+        <label for="bio">Bio <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(max 300 chars)</span></label>
+        <textarea id="bio" name="bio" rows="3" maxlength="300"><%= currentUser.bio || '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="website">Website</label>
+        <input type="url" id="website" name="website" placeholder="https://yoursite.com" value="<%= currentUser.website || '' %>" />
+      </div>
+      <div class="form-group">
+        <label for="twitter">Twitter handle <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(without @)</span></label>
+        <input type="text" id="twitter" name="twitter" placeholder="yourhandle" value="<%= currentUser.twitter || '' %>" />
+      </div>
+      <div class="form-group">
+        <label for="github">GitHub username</label>
+        <input type="text" id="github" name="github" placeholder="yourusername" value="<%= currentUser.github || '' %>" />
+      </div>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+  </div>
+</main>
+<footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

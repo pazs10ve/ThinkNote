@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<%- include('../partials/nav') %>
+<main class="main-content">
+  <div class="container">
+    <h1 style="font-size:1.75rem;margin-bottom:0.35rem">Explore</h1>
+    <p class="text-muted" style="margin-bottom:2.5rem">Trending posts and popular topics this week.</p>
+
+    <!-- Tags cloud -->
+    <section style="margin-bottom:2.5rem">
+      <h2 style="font-size:1.1rem;margin-bottom:1rem">Popular Tags</h2>
+      <div class="tag-list" style="flex-wrap:wrap;gap:0.6rem">
+        <% tags.forEach(t => { %>
+          <a href="/?tag=<%= t._id %>" class="tag" style="font-size:0.88rem;padding:0.3rem 0.8rem">
+            #<%= t._id %> <span style="color:var(--text-subtle);font-size:0.78rem">(<%= t.count %>)</span>
+          </a>
+        <% }) %>
+      </div>
+    </section>
+
+    <!-- Trending posts -->
+    <section>
+      <h2 style="font-size:1.1rem;margin-bottom:1.25rem">Trending This Week</h2>
+      <% if (trending.length === 0) { %>
+        <div class="empty-state"><p>No trending posts this week.</p></div>
+      <% } else { %>
+        <div class="post-list">
+          <% trending.forEach(post => { %><%- include('../partials/post-card', { post }) %><% }) %>
+        </div>
+      <% } %>
+    </section>
+  </div>
+</main>
+<footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<article class="post-card">
+  <% if (post.coverImage) { %>
+    <a href="/post/<%= post.slug %>">
+      <img src="<%= post.coverImage %>" alt="<%= post.title %>" class="post-card-cover" />
+    </a>
+  <% } %>
+  <div class="post-card-body">
+    <div class="post-card-meta">
+      <a href="/u/<%= post.author.username %>" class="author-chip">
+        <img src="<%= post.author.avatarUrl %>" alt="" class="author-chip-avatar" />
+        <span><%= post.author.displayName %></span>
+      </a>
+      <span class="meta-sep">·</span>
+      <time><%= formatDate(post.publishedAt || post.createdAt) %></time>
+    </div>
+    <h2 class="post-card-title">
+      <a href="/post/<%= post.slug %>"><%= post.title %></a>
+    </h2>
+    <p class="post-card-excerpt"><%= truncate(post.excerpt, 160) %></p>
+    <div class="post-card-footer">
+      <% if (post.tags && post.tags.length) { %>
+        <div class="tag-list">
+          <% post.tags.slice(0,3).forEach(tag => { %>
+            <a href="/?tag=<%= tag %>" class="tag">#<%= tag %></a>
+          <% }) %>
+        </div>
+      <% } %>
+      <div class="post-card-stats">
+        <span>❤️ <%= post.likeCount %></span>
+        <span>💬 <%= post.commentCount %></span>
+      </div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,32 @@
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="/" class="nav-logo">ThinkNote</a>
+
+    <div class="nav-links" id="navLinks">
+      <a href="/explore">Explore</a>
+      <a href="/search">Search</a>
+      <% if (currentUser) { %>
+        <a href="/feed">Following</a>
+        <a href="/new-post" class="btn btn-primary btn-sm">Write</a>
+        <div class="nav-avatar-wrap" id="avatarMenu">
+          <img src="<%= currentUser.avatarUrl %>" alt="<%= currentUser.displayName %>" class="nav-avatar" id="avatarBtn" />
+          <div class="dropdown-menu" id="dropdownMenu">
+            <a href="/u/<%= currentUser.username %>">Profile</a>
+            <a href="/bookmarks">Bookmarks</a>
+            <a href="/settings">Settings</a>
+            <% if (currentUser.role === 'admin') { %><a href="/admin">Admin</a><% } %>
+            <hr />
+            <a href="/auth/logout">Sign Out</a>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/auth/login">Sign In</a>
+        <a href="/auth/register" class="btn btn-primary btn-sm">Get Started</a>
+      <% } %>
+    </div>
+
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<%- include('../partials/nav') %>
+<main class="main-content">
+  <div class="container" style="max-width:780px">
+    <div style="margin-bottom:2rem">
+      <h1 style="font-size:1.75rem">Edit Post</h1>
+    </div>
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+    <form action="/posts/<%= post._id %>" method="POST" enctype="multipart/form-data" class="card" style="padding:2rem">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" value="<%= post.title %>" required />
+      </div>
+      <div class="form-group">
+        <label for="body">Content <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(Markdown)</span></label>
+        <textarea id="body" name="body" rows="18" required><%= post.body %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="tags">Tags <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(comma-separated)</span></label>
+        <input type="text" id="tags" name="tags" value="<%= post.tags.join(', ') %>" />
+      </div>
+      <% if (post.coverImage) { %>
+        <div class="form-group">
+          <label>Current Cover</label>
+          <img src="<%= post.coverImage %>" alt="Cover" style="width:100%;max-height:200px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:0.5rem" />
+        </div>
+      <% } %>
+      <div class="form-group">
+        <label for="coverImage">New Cover Image <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(optional)</span></label>
+        <input type="file" id="coverImage" name="coverImage" accept="image/*" style="color:var(--text-muted)" />
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:0.5rem;flex-wrap:wrap">
+        <button type="submit" name="status" value="published" class="btn btn-primary">Save & Publish</button>
+        <button type="submit" name="status" value="draft" class="btn btn-outline">Save as Draft</button>
+        <a href="/post/<%= post.slug %>" class="btn btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+<footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

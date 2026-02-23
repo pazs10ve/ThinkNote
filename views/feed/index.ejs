@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+  <%- include('../partials/nav') %>
+  <main class="main-content">
+    <div class="container feed-layout">
+      <div class="feed-main">
+        <div class="feed-tabs">
+          <a href="/" class="feed-tab <%= feedType === 'global' ? 'active' : '' %>">Global</a>
+          <% if (currentUser) { %>
+            <a href="/feed" class="feed-tab <%= feedType === 'following' ? 'active' : '' %>">Following</a>
+          <% } %>
+        </div>
+
+        <% if (posts.length === 0) { %>
+          <div class="empty-state">
+            <% if (feedType === 'following') { %>
+              <p>Follow some writers to see their posts here. <a href="/explore">Explore authors →</a></p>
+            <% } else { %>
+              <p>No posts yet. <a href="/auth/register">Be the first to write!</a></p>
+            <% } %>
+          </div>
+        <% } %>
+
+        <div class="post-list">
+          <% posts.forEach(post => { %> <%- include('../partials/post-card', { post }) %> <% }) %>
+        </div>
+
+        <% if (pages > 1) { %> <%- include('../partials/pagination', { page, pages, activeTag }) %> <% } %>
+      </div>
+
+      <aside class="feed-sidebar">
+        <div class="sidebar-card">
+          <h3>Explore Topics</h3>
+          <p class="text-muted">Find ideas across all areas.</p>
+          <a href="/explore" class="btn btn-outline btn-sm" style="margin-top:0.75rem">Browse Tags →</a>
+        </div>
+        <% if (!currentUser) { %>
+          <div class="sidebar-card cta-card">
+            <h3>Join ThinkNote</h3>
+            <p>Write and discover ideas that matter.</p>
+            <a href="/auth/register" class="btn btn-primary" style="width:100%;margin-top:1rem;text-align:center">Get Started Free</a>
+          </div>
+        <% } %>
+      </aside>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>

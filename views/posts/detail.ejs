@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <style>
+    .post-body { font-family: var(--font-serif); font-size: 1.1rem; line-height: 1.85; color: var(--text); }
+    .post-body h1,.post-body h2,.post-body h3 { font-family: var(--font-sans); margin: 2rem 0 1rem; }
+    .post-body p { margin-bottom: 1.4rem; }
+    .post-body code { background: var(--bg-elevated); padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.88em; }
+    .post-body pre { background: var(--bg-elevated); padding: 1.25rem; border-radius: var(--radius-sm); overflow-x: auto; margin-bottom: 1.4rem; }
+    .post-body pre code { background: none; padding: 0; }
+    .post-body blockquote { border-left: 3px solid var(--accent); margin: 1.5rem 0; padding: 0.5rem 1.25rem; color: var(--text-muted); font-style: italic; }
+    .post-body img { border-radius: var(--radius-sm); margin: 1.5rem 0; }
+    .post-body a { color: var(--accent); }
+    .action-bar { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 2rem 0; flex-wrap: wrap; }
+    .action-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-muted); font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
+    .action-btn:hover, .action-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+    .comment { display: flex; gap: 0.9rem; margin-bottom: 1.25rem; }
+    .comment-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .comment-bubble { flex: 1; background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 0.85rem 1rem; }
+    .comment-meta { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .comment-body { font-size: 0.92rem; color: var(--text); }
+    .reply-indent { margin-left: 3rem; }
+  </style>
+</head>
+<body>
+<%- include('../partials/nav') %>
+<main class="main-content">
+  <article class="container" style="max-width:780px">
+
+    <% if (post.coverImage) { %>
+      <img src="<%= post.coverImage %>" alt="Cover" style="width:100%;max-height:420px;object-fit:cover;border-radius:var(--radius);margin-bottom:2rem" />
+    <% } %>
+
+    <div class="tag-list" style="margin-bottom:1rem">
+      <% post.tags.forEach(t => { %><a href="/?tag=<%= t %>" class="tag">#<%= t %></a><% }) %>
+    </div>
+
+    <h1 style="font-size:clamp(1.75rem,4vw,2.75rem);line-height:1.2;margin-bottom:1.25rem"><%= post.title %></h1>
+
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:2rem">
+      <a href="/u/<%= post.author.username %>" class="author-chip">
+        <img src="<%= post.author.avatarUrl || '/img/default-avatar.png' %>" class="author-chip-avatar" alt="<%= post.author.displayName %>" />
+        <strong><%= post.author.displayName %></strong>
+      </a>
+      <time><%= formatDate(post.publishedAt) %></time>
+      <span class="text-muted" style="font-size:0.82rem"><%= post.viewCount %> views</span>
+    </div>
+
+    <div class="post-body"><%- htmlBody %></div>
+
+    <!-- Action bar -->
+    <div class="action-bar">
+      <% if (currentUser) { %>
+        <button class="action-btn <%= userLiked ? 'active' : '' %>" id="likeBtn" data-post-id="<%= post._id %>">
+          ♥ <span id="likeCount"><%= post.likeCount %></span>
+        </button>
+        <button class="action-btn <%= userBookmarked ? 'active' : '' %>" id="bookmarkBtn" data-post-id="<%= post._id %>">
+          🔖 <%= userBookmarked ? 'Saved' : 'Save' %>
+        </button>
+        <% if (currentUser._id.toString() === post.author._id.toString()) { %>
+          <a href="/posts/<%= post._id %>/edit" class="action-btn">✏️ Edit</a>
+          <form action="/posts/<%= post._id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('Delete this post?')">
+            <button type="submit" class="action-btn" style="border-color:var(--error);color:var(--error)">🗑 Delete</button>
+          </form>
+        <% } %>
+      <% } else { %>
+        <a href="/auth/login" class="action-btn">♥ <%= post.likeCount %> Likes</a>
+        <a href="/auth/login" class="action-btn">🔖 Save</a>
+      <% } %>
+    </div>
+
+    <!-- Author card -->
+    <div class="card" style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2.5rem;flex-wrap:wrap">
+      <img src="<%= post.author.avatarUrl || '/img/default-avatar.png' %>" style="width:60px;height:60px;border-radius:50%;object-fit:cover" alt="<%= post.author.displayName %>" />
+      <div style="flex:1">
+        <a href="/u/<%= post.author.username %>" style="font-weight:600;font-size:1.05rem;color:var(--text)"><%= post.author.displayName %></a>
+        <p style="margin:0.25rem 0 0;font-size:0.88rem"><%= post.author.bio || '' %></p>
+      </div>
+      <% if (currentUser && currentUser._id.toString() !== post.author._id.toString()) { %>
+        <button class="btn btn-outline btn-sm" id="followBtn" data-username="<%= post.author.username %>">
+          <%= userFollowsAuthor ? 'Following' : 'Follow' %>
+        </button>
+      <% } %>
+    </div>
+
+    <!-- Comments -->
+    <section>
+      <h2 style="font-size:1.25rem;margin-bottom:1.5rem">Comments (<%= post.commentCount %>)</h2>
+
+      <% if (currentUser) { %>
+        <div class="comment" style="margin-bottom:1.75rem">
+          <img src="<%= currentUser.avatarUrl || '/img/default-avatar.png' %>" class="comment-avatar" alt="me" />
+          <div style="flex:1">
+            <textarea id="commentInput" rows="3" placeholder="Share your thoughts…" style="width:100%;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.65rem 0.9rem;color:var(--text);font-size:0.9rem;resize:vertical;font-family:var(--font-sans);outline:none"></textarea>
+            <button class="btn btn-primary btn-sm" style="margin-top:0.5rem" id="submitComment" data-post-id="<%= post._id %>">Post Comment</button>
+          </div>
+        </div>
+      <% } else { %>
+        <p class="text-muted"><a href="/auth/login">Sign in</a> to leave a comment.</p>
+      <% } %>
+
+      <div id="commentsList"></div>
+    </section>
+
+  </article>
+</main>
+<footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="/js/main.js"></script>
+<script src="/js/post.js"></script>
+</body>
+</html>
