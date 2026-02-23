@@ -1,33 +1,52 @@
-<article class="post-card">
+<article class="post-card animate-in">
   <% if (post.coverImage) { %>
     <a href="/post/<%= post.slug %>">
-      <img src="<%= post.coverImage %>" alt="<%= post.title %>" class="post-card-cover" />
+      <img src="<%= post.coverImage %>" alt="<%= post.title %>" class="post-card-cover" loading="lazy" />
     </a>
   <% } %>
+
   <div class="post-card-body">
-    <div class="post-card-meta">
+    <!-- Author + date row -->
+    <div class="post-card-meta" style="margin-bottom:0.85rem">
       <a href="/u/<%= post.author.username %>" class="author-chip">
-        <img src="<%= post.author.avatarUrl %>" alt="" class="author-chip-avatar" />
+        <img src="<%= post.author.avatarUrl || '/img/default-avatar.png' %>" alt="" class="author-chip-avatar" />
         <span><%= post.author.displayName %></span>
       </a>
-      <span class="meta-sep">·</span>
-      <time><%= formatDate(post.publishedAt || post.createdAt) %></time>
+      <span class="post-stat" style="margin-left:auto">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <%= formatDate(post.publishedAt || post.createdAt) %>
+      </span>
     </div>
+
+    <!-- Title -->
     <h2 class="post-card-title">
       <a href="/post/<%= post.slug %>"><%= post.title %></a>
     </h2>
-    <p class="post-card-excerpt"><%= truncate(post.excerpt, 160) %></p>
-    <div class="post-card-footer">
+
+    <!-- Excerpt -->
+    <p class="post-card-excerpt"><%= truncate(post.excerpt, 150) %></p>
+
+    <!-- Footer: tags + stats -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:1rem">
       <% if (post.tags && post.tags.length) { %>
         <div class="tag-list">
           <% post.tags.slice(0,3).forEach(tag => { %>
             <a href="/?tag=<%= tag %>" class="tag">#<%= tag %></a>
           <% }) %>
         </div>
+      <% } else { %>
+        <div></div>
       <% } %>
-      <div class="post-card-stats">
-        <span>❤️ <%= post.likeCount %></span>
-        <span>💬 <%= post.commentCount %></span>
+
+      <div style="display:flex;gap:1rem">
+        <span class="post-stat">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <%= post.likeCount %>
+        </span>
+        <span class="post-stat">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <%= post.commentCount %>
+        </span>
       </div>
     </div>
   </div>

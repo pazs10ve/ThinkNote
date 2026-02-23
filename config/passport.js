@@ -87,9 +87,9 @@ if (process.env.GOOGLE_CLIENT_ID) {
       } catch (e) { done(e); }
     }
   ));
-  console.log('✅ Google OAuth strategy registered');
+  console.log(' Google OAuth strategy registered');
 } else {
-  console.log('⚠️  GOOGLE_CLIENT_ID not set — Google OAuth disabled');
+  console.log('  GOOGLE_CLIENT_ID not set — Google OAuth disabled');
 }
 
 // ── Register GitHub strategy ────────────────────────
@@ -113,9 +113,9 @@ if (process.env.GITHUB_CLIENT_ID) {
       } catch (e) { done(e); }
     }
   ));
-  console.log('✅ GitHub OAuth strategy registered');
+  console.log(' GitHub OAuth strategy registered');
 } else {
-  console.log('⚠️  GITHUB_CLIENT_ID not set — GitHub OAuth disabled');
+  console.log(' GITHUB_CLIENT_ID not set — GitHub OAuth disabled');
 }
 
 export default passport;

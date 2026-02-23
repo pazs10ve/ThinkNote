@@ -1,59 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/main.css" />
+  <%- include('../partials/head') %>
 </head>
 <body>
   <%- include('../partials/nav') %>
+
   <main class="main-content">
-    <div class="container feed-layout">
-      <div class="feed-main">
-        <div class="feed-tabs">
-          <a href="/" class="feed-tab <%= feedType === 'global' ? 'active' : '' %>">Global</a>
-          <% if (currentUser) { %>
-            <a href="/feed" class="feed-tab <%= feedType === 'following' ? 'active' : '' %>">Following</a>
+    <div class="container">
+
+      <!-- Hero -->
+      <div class="feed-hero">
+        <h1><%= feedType === 'following' ? 'Your Feed' : 'What\'s Happening' %></h1>
+        <p class="lead" style="max-width:480px">
+          <%= feedType === 'following'
+            ? 'Stories from the writers you follow.'
+            : 'Discover fresh ideas from the ThinkNote community.' %>
+        </p>
+      </div>
+
+      <div class="feed-layout">
+        <!-- Posts column -->
+        <div>
+          <!-- Filter tabs -->
+          <div class="filter-bar">
+            <a href="/" class="filter-tab <%= feedType === 'global' ? 'active' : '' %>">Global</a>
+            <% if (currentUser) { %>
+              <a href="/feed" class="filter-tab <%= feedType === 'following' ? 'active' : '' %>">Following</a>
+            <% } %>
+            <% if (activeTag) { %>
+              <span class="filter-tab active" style="gap:0.4rem">
+                #<%= activeTag %>
+                <a href="/" style="color:inherit;margin-left:2px;opacity:0.6;font-size:0.8rem">✕</a>
+              </span>
+            <% } %>
+          </div>
+
+          <% if (posts.length === 0) { %>
+            <div class="empty-state">
+              <div style="font-size:2.5rem;margin-bottom:1rem">
+                <img src="/img/brand/logo.svg" alt="" width="64" height="64" style="opacity:0.25" />
+              </div>
+              <% if (feedType === 'following') { %>
+                <p>Follow some writers to see their posts here.</p>
+                <a href="/explore" class="btn btn-outline" style="margin-top:1.25rem">Explore Authors →</a>
+              <% } else { %>
+                <p>No posts yet — be the first!</p>
+                <a href="/auth/register" class="btn btn-primary" style="margin-top:1.25rem">Start Writing →</a>
+              <% } %>
+            </div>
+          <% } %>
+
+          <div class="post-list">
+            <% posts.forEach(post => { %>
+              <%- include('../partials/post-card', { post }) %>
+            <% }) %>
+          </div>
+
+          <% if (pages > 1) { %>
+            <%- include('../partials/pagination', { page, pages, activeTag }) %>
           <% } %>
         </div>
 
-        <% if (posts.length === 0) { %>
-          <div class="empty-state">
-            <% if (feedType === 'following') { %>
-              <p>Follow some writers to see their posts here. <a href="/explore">Explore authors →</a></p>
-            <% } else { %>
-              <p>No posts yet. <a href="/auth/register">Be the first to write!</a></p>
+        <!-- Sidebar -->
+        <aside class="feed-sidebar">
+          <% if (!currentUser) { %>
+            <div class="widget" style="background:var(--grad-subtle);border-color:rgba(139,92,246,0.2)">
+              <div style="margin-bottom:1rem">
+                <img src="/img/brand/logo.svg" alt="" width="48" height="48" />
+              </div>
+              <h3 style="font-size:1.1rem;margin-bottom:0.4rem">Join ThinkNote</h3>
+              <p style="font-size:0.9rem;margin-bottom:1.25rem">Write and discover ideas that matter. Free forever.</p>
+              <a href="/auth/register" class="btn btn-primary btn-full">Get Started Free</a>
+              <a href="/auth/login" class="btn btn-ghost btn-full" style="margin-top:0.5rem;font-size:0.88rem">Already have an account?</a>
+            </div>
+          <% } %>
+
+          <div class="widget">
+            <div class="widget-title">Explore Topics</div>
+            <div class="tag-list">
+              <a href="/?tag=technology" class="tag">#technology</a>
+              <a href="/?tag=design" class="tag">#design</a>
+              <a href="/?tag=programming" class="tag">#programming</a>
+              <a href="/?tag=startup" class="tag">#startup</a>
+              <a href="/?tag=ai" class="tag">#ai</a>
+              <a href="/?tag=productivity" class="tag">#productivity</a>
+            </div>
+            <a href="/explore" class="btn btn-ghost btn-sm" style="margin-top:1rem;width:100%">Browse all tags →</a>
+          </div>
+
+          <div class="widget">
+            <div class="widget-title">Quick Links</div>
+            <a href="/explore" class="dropdown-item" style="border-radius:var(--radius-sm);padding:0.6rem 0.75rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Explore
+            </a>
+            <% if (currentUser) { %>
+              <a href="/bookmarks" class="dropdown-item" style="border-radius:var(--radius-sm);padding:0.6rem 0.75rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                Bookmarks
+              </a>
+              <a href="/new-post" class="dropdown-item" style="border-radius:var(--radius-sm);padding:0.6rem 0.75rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                Write a post
+              </a>
             <% } %>
           </div>
-        <% } %>
-
-        <div class="post-list">
-          <% posts.forEach(post => { %> <%- include('../partials/post-card', { post }) %> <% }) %>
-        </div>
-
-        <% if (pages > 1) { %> <%- include('../partials/pagination', { page, pages, activeTag }) %> <% } %>
+        </aside>
       </div>
-
-      <aside class="feed-sidebar">
-        <div class="sidebar-card">
-          <h3>Explore Topics</h3>
-          <p class="text-muted">Find ideas across all areas.</p>
-          <a href="/explore" class="btn btn-outline btn-sm" style="margin-top:0.75rem">Browse Tags →</a>
-        </div>
-        <% if (!currentUser) { %>
-          <div class="sidebar-card cta-card">
-            <h3>Join ThinkNote</h3>
-            <p>Write and discover ideas that matter.</p>
-            <a href="/auth/register" class="btn btn-primary" style="width:100%;margin-top:1rem;text-align:center">Get Started Free</a>
-          </div>
-        <% } %>
-      </aside>
     </div>
   </main>
-  <footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 <strong>ThinkNote</strong> · <a href="/explore">Explore</a> · <a href="/auth/register">Sign Up</a></p>
+    </div>
+  </footer>
+
   <script src="/js/main.js"></script>
 </body>
 </html>

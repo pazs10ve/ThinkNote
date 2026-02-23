@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/main.css" />
+  <% let extraCss = `
   <style>
     table { width:100%; border-collapse:collapse; font-size:0.88rem; }
     th { text-align:left; color:var(--text-muted); font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.6rem 1rem; border-bottom:1px solid var(--border); }
@@ -17,7 +13,8 @@
     .badge-user   { background:var(--bg-elevated); color:var(--text-muted); }
     .badge-ok     { background:rgba(74,222,128,0.12); color:var(--success); }
     .badge-warn   { background:rgba(248,113,113,0.12); color:var(--error); }
-  </style>
+  </style>`; %>
+  <%- include('../../partials/head', { extraCss }) %>
 </head>
 <body>
 <%- include('../../partials/nav') %>

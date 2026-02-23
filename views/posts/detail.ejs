@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/main.css" />
+  <% let extraCss = `
   <style>
     .post-body { font-family: var(--font-serif); font-size: 1.1rem; line-height: 1.85; color: var(--text); }
     .post-body h1,.post-body h2,.post-body h3 { font-family: var(--font-sans); margin: 2rem 0 1rem; }
@@ -25,7 +21,8 @@
     .comment-meta { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.4rem; }
     .comment-body { font-size: 0.92rem; color: var(--text); }
     .reply-indent { margin-left: 3rem; }
-  </style>
+  </style>`; %>
+  <%- include('../partials/head', { extraCss }) %>
 </head>
 <body>
 <%- include('../partials/nav') %>
