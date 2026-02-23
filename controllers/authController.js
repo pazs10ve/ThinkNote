@@ -5,7 +5,7 @@ import mailService from '../services/mailService.js';
 
 export const showRegister = (req, res) => {
   if (res.locals.currentUser) return res.redirect('/');
-  res.render('auth/register', { title: 'Begin Your Apprenticeship — ThinkNote', error: null, values: {} });
+  res.render('auth/register', { title: 'Sign Up', error: null, values: {} });
 };
 
 export const register = async (req, res) => {
@@ -25,15 +25,15 @@ export const register = async (req, res) => {
     });
     console.log(`[DEV] Verify URL: ${process.env.BASE_URL}/auth/verify/${verifyToken}`);
     await mailService.sendVerificationEmail(email, verifyToken);
-    res.render('auth/register-success', { title: 'Credential Validation — ThinkNote', email });
+    res.render('auth/register-success', { title: 'Registration Successful', email });
   } catch (err) {
-    res.render('auth/register', { title: 'Begin Your Apprenticeship — ThinkNote', error: err.message, values: req.body });
+    res.render('auth/register', { title: 'Sign Up', error: err.message, values: req.body });
   }
 };
 
 export const showLogin = (req, res) => {
   if (res.locals.currentUser) return res.redirect('/');
-  res.render('auth/login', { title: 'Enter the Workshop — ThinkNote', error: null });
+  res.render('auth/login', { title: 'Sign In', error: null });
 };
 
 export const login = async (req, res) => {
@@ -55,7 +55,7 @@ export const login = async (req, res) => {
     });
     res.redirect('/');
   } catch (err) {
-    res.render('auth/login', { title: 'Enter the Workshop — ThinkNote', error: err.message });
+    res.render('auth/login', { title: 'Sign In', error: err.message });
   }
 };
 
@@ -75,14 +75,14 @@ export const verifyEmail = async (req, res) => {
     user.verifyToken = undefined;
     user.verifyTokenExp = undefined;
     await user.save();
-    res.render('auth/verified', { title: 'Credentials Validated — ThinkNote' });
+    res.render('auth/verified', { title: 'Account Verified' });
   } catch (err) {
     res.render('error', { message: 'Something went wrong.', code: 500 });
   }
 };
 
 export const showForgotPassword = (req, res) => {
-  res.render('auth/forgot-password', { title: 'Recover Credentials — ThinkNote', message: null, error: null });
+  res.render('auth/forgot-password', { title: 'Forgot Password', message: null, error: null });
 };
 
 export const forgotPassword = async (req, res) => {
@@ -98,19 +98,19 @@ export const forgotPassword = async (req, res) => {
       await mailService.sendPasswordResetEmail(email, resetToken);
     }
     res.render('auth/forgot-password', {
-      title: 'Recover Credentials — ThinkNote',
+      title: 'Forgot Password',
       message: 'If that email exists in our records, a recovery link has been sent.',
       error: null,
     });
   } catch (err) {
-    res.render('auth/forgot-password', { title: 'Recover Credentials — ThinkNote', message: null, error: 'Structural error. Please try again later.' });
+    res.render('auth/forgot-password', { title: 'Forgot Password', message: null, error: 'Structural error. Please try again later.' });
   }
 };
 
 export const showResetPassword = async (req, res) => {
   const user = await User.findOne({ resetToken: req.params.token, resetTokenExp: { $gt: Date.now() } });
   if (!user) return res.render('error', { message: 'Credential reset window has closed.', code: 400 });
-  res.render('auth/reset-password', { title: 'Update Credentials — ThinkNote', token: req.params.token, error: null });
+  res.render('auth/reset-password', { title: 'Reset Password', token: req.params.token, error: null });
 };
 
 export const resetPassword = async (req, res) => {
@@ -125,6 +125,6 @@ export const resetPassword = async (req, res) => {
     await user.save();
     res.redirect('/auth/login');
   } catch (err) {
-    res.render('auth/reset-password', { title: 'Update Credentials — ThinkNote', token: req.params.token, error: err.message });
+    res.render('auth/reset-password', { title: 'Reset Password', token: req.params.token, error: err.message });
   }
 };

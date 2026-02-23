@@ -13,7 +13,7 @@ export const dashboard = async (req, res) => {
     ]);
     const s = stats[0] || { totalViews: 0, totalLikes: 0 };
     res.render('admin/dashboard', { 
-      title: 'Admin Dashboard — ThinkNote', 
+      title: 'Admin Dashboard', 
       userCount, 
       postCount, 
       totalViews: s.totalViews, 
@@ -27,7 +27,7 @@ export const dashboard = async (req, res) => {
 
 export const users = async (req, res) => {
   const users = await User.find().sort({ createdAt: -1 }).select('-passwordHash');
-  res.render('admin/users', { title: 'Manage Users — ThinkNote', users });
+  res.render('admin/users', { title: 'Manage Users', users });
 };
 
 export const toggleSuspend = async (req, res) => {
@@ -43,7 +43,7 @@ export const deleteUser = async (req, res) => {
 
 export const posts = async (req, res) => {
   const posts = await Post.find().sort({ createdAt: -1 }).populate('author', 'username displayName');
-  res.render('admin/posts', { title: 'Manage Posts — ThinkNote', posts });
+  res.render('admin/posts', { title: 'Manage Posts', posts });
 };
 
 export const deletePost = async (req, res) => {

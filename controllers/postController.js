@@ -5,7 +5,7 @@ import { generateSlug } from '../services/slugService.js';
 import { marked } from 'marked';
 
 export const showCreate = (req, res) => {
-  res.render('posts/create', { title: 'Draft Blueprint — ThinkNote', error: null, values: {} });
+  res.render('posts/create', { title: 'Draft Blueprint', error: null, values: {} });
 };
 
 export const create = async (req, res) => {
@@ -24,7 +24,7 @@ export const create = async (req, res) => {
     });
     res.redirect(`/post/${post.slug}`);
   } catch (err) {
-    res.render('posts/create', { title: 'Draft Blueprint — ThinkNote', error: err.message, values: req.body });
+    res.render('posts/create', { title: 'Draft Blueprint', error: err.message, values: req.body });
   }
 };
 
@@ -50,7 +50,7 @@ export const detail = async (req, res) => {
     Post.updateOne({ _id: post._id }, { $inc: { viewCount: 1 } }).exec();
 
     res.render('posts/detail', {
-      title: `${post.title} — ThinkNote`,
+      title: post.title,
       post, htmlBody,
       userLiked: !!userLiked,
       userBookmarked: !!userBookmarked,
@@ -67,7 +67,7 @@ export const showEdit = async (req, res) => {
     if (!post) return res.render('error', { message: 'Blueprint not found in the workshop index.', code: 404 });
     if (post.author.toString() !== res.locals.currentUser._id.toString())
       return res.render('error', { message: 'Access denied: You are not the commissioned architect.', code: 403 });
-    res.render('posts/edit', { title: 'Refine Blueprint — ThinkNote', post, error: null });
+    res.render('posts/edit', { title: 'Refine Blueprint', post, error: null });
   } catch (err) {
     res.render('error', { message: 'Could not load your blueprint.', code: 500 });
   }
@@ -115,7 +115,7 @@ export const bookmarks = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate({ path: 'post', populate: { path: 'author', select: 'username displayName avatarUrl' } });
     const posts = items.map(b => b.post).filter(Boolean);
-    res.render('bookmarks', { title: 'Archived Blueprints — ThinkNote', posts });
+    res.render('bookmarks', { title: 'Archived Blueprints', posts });
   } catch (err) {
     res.render('error', { message: 'Could not load bookmarks.', code: 500 });
   }

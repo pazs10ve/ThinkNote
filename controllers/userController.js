@@ -17,7 +17,7 @@ export const profile = async (req, res) => {
     }
 
     res.render('users/profile', {
-      title: `${profileUser.displayName} (@${profileUser.username}) — ThinkNote`,
+      title: `@${profileUser.username}`,
       profileUser, posts, isFollowing,
     });
   } catch (err) {
@@ -31,7 +31,7 @@ export const followers = async (req, res) => {
       .populate('followers', 'username displayName avatarUrl bio');
     if (!profileUser) return res.render('error', { message: 'User not found.', code: 404 });
     res.render('users/followers', {
-      title: `Followers of @${profileUser.username} — ThinkNote`,
+      title: 'Followers',
       profileUser, users: profileUser.followers,
     });
   } catch (err) {
@@ -45,7 +45,7 @@ export const following = async (req, res) => {
       .populate('following', 'username displayName avatarUrl bio');
     if (!profileUser) return res.render('error', { message: 'User not found.', code: 404 });
     res.render('users/following', {
-      title: `@${profileUser.username} is following — ThinkNote`,
+      title: 'Following',
       profileUser, users: profileUser.following,
     });
   } catch (err) {
@@ -54,7 +54,7 @@ export const following = async (req, res) => {
 };
 
 export const showSettings = (req, res) => {
-  res.render('settings', { title: 'Settings — ThinkNote', error: null, success: null });
+  res.render('settings', { title: 'Settings', error: null, success: null });
 };
 
 export const updateSettings = async (req, res) => {
@@ -70,9 +70,9 @@ export const updateSettings = async (req, res) => {
     user.notifyOnLike = !!notifyOnLike;
     user.notifyOnComment = !!notifyOnComment;
     await user.save();
-    res.render('settings', { title: 'Settings — ThinkNote', error: null, success: 'Profile updated!' });
+    res.render('settings', { title: 'Settings', error: null, success: 'Profile updated!' });
   } catch (err) {
-    res.render('settings', { title: 'Settings — ThinkNote', error: err.message, success: null });
+    res.render('settings', { title: 'Settings', error: err.message, success: null });
   }
 };
 
@@ -84,6 +84,6 @@ export const updateAvatar = async (req, res) => {
     await user.save();
     res.redirect('/settings');
   } catch (err) {
-    res.render('settings', { title: 'Settings — ThinkNote', error: err.message, success: null });
+    res.render('settings', { title: 'Settings', error: err.message, success: null });
   }
 };

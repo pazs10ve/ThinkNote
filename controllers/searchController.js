@@ -20,7 +20,7 @@ export const search = async (req, res) => {
       }).select('username displayName avatarUrl bio').limit(20);
     }
   }
-  res.render('search', { title: `Search: ${q} — ThinkNote`, q, type, results });
+  res.render('search', { title: q ? `Search ${q}` : 'Search', q, type, results });
 };
 
 export const explore = async (req, res) => {
@@ -38,5 +38,5 @@ export const explore = async (req, res) => {
     { $limit: 50 },
   ]);
 
-  res.render('explore', { title: 'Explore — ThinkNote', trending, tags: tagsAgg });
+  res.render('explore', { title: 'Explore', trending, tags: tagsAgg });
 };

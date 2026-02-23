@@ -18,7 +18,7 @@ export const globalFeed = async (req, res) => {
     ]);
 
     res.render('feed/index', {
-      title: 'ThinkNote — Home', posts, page,
+      title: 'Home', posts, page,
       pages: Math.ceil(total / PAGE_SIZE), activeTag: tag, feedType: 'global',
     });
   } catch (err) {
@@ -41,7 +41,7 @@ export const followingFeed = async (req, res) => {
     ]);
 
     res.render('feed/index', {
-      title: 'Following — ThinkNote', posts, page,
+      title: 'Following', posts, page,
       pages: Math.ceil(total / PAGE_SIZE), activeTag: null, feedType: 'following',
     });
   } catch (err) {
