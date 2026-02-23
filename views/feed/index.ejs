@@ -11,11 +11,11 @@
 
       <!-- Hero -->
       <div class="feed-hero">
-        <h1><%= feedType === 'following' ? 'Your Feed' : 'What\'s Happening' %></h1>
-        <p class="lead" style="max-width:480px">
+        <h1><%= feedType === 'following' ? 'Your Drafting Desk' : 'The Global Workshop' %></h1>
+        <p class="lead" style="max-width:520px">
           <%= feedType === 'following'
-            ? 'Stories from the writers you follow.'
-            : 'Discover fresh ideas from the ThinkNote community.' %>
+            ? 'The builders and thinkers you\'ve chosen to follow.'
+            : 'Study the blueprints of the world\'s most inventive minds.' %>
         </p>
       </div>
 
@@ -24,7 +24,7 @@
         <div>
           <!-- Filter tabs -->
           <div class="filter-bar">
-            <a href="/" class="filter-tab <%= feedType === 'global' ? 'active' : '' %>">Global</a>
+            <a href="/" class="filter-tab <%= feedType === 'global' ? 'active' : '' %>">Public Blueprints</a>
             <% if (currentUser) { %>
               <a href="/feed" class="filter-tab <%= feedType === 'following' ? 'active' : '' %>">Following</a>
             <% } %>
@@ -42,11 +42,11 @@
                 <img src="/img/brand/logo.svg" alt="" width="64" height="64" style="opacity:0.25" />
               </div>
               <% if (feedType === 'following') { %>
-                <p>Follow some writers to see their posts here.</p>
-                <a href="/explore" class="btn btn-outline" style="margin-top:1.25rem">Explore Authors →</a>
+                <p>Your desk is clear. Follow some master architects to start building your feed.</p>
+                <a href="/explore" class="btn btn-outline" style="margin-top:1.25rem">Find Architects →</a>
               <% } else { %>
-                <p>No posts yet — be the first!</p>
-                <a href="/auth/register" class="btn btn-primary" style="margin-top:1.25rem">Start Writing →</a>
+                <p>The workshop is currently empty. Engineer the first blueprint for the community.</p>
+                <a href="/posts/create" class="btn btn-primary" style="margin-top:1.25rem">Construct Post →</a>
               <% } %>
             </div>
           <% } %>

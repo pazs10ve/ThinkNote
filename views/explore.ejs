@@ -7,12 +7,12 @@
 <%- include('partials/nav') %>
 <main class="main-content">
   <div class="container">
-    <h1 style="font-size:1.75rem;margin-bottom:0.35rem">Explore</h1>
-    <p class="text-muted" style="margin-bottom:2.5rem">Trending posts and popular topics this week.</p>
+    <h1 style="font-size:1.75rem;margin-bottom:0.35rem">The Exhibition Hall</h1>
+    <p class="text-muted" style="margin-bottom:2.5rem">Study structural themes and master architects from across the ThinkNote workshop.</p>
 
     <!-- Tags cloud -->
     <section style="margin-bottom:2.5rem">
-      <h2 style="font-size:1.1rem;margin-bottom:1rem">Popular Tags</h2>
+      <h2 style="font-size:1.1rem;margin-bottom:1rem">Structural Themes</h2>
       <div class="tag-list" style="flex-wrap:wrap;gap:0.6rem">
         <% tags.forEach(t => { %>
           <a href="/?tag=<%= t._id %>" class="tag" style="font-size:0.88rem;padding:0.3rem 0.8rem">
@@ -22,9 +22,9 @@
       </div>
     </section>
 
-    <!-- Trending posts -->
+    <!-- Featured blueprints -->
     <section>
-      <h2 style="font-size:1.1rem;margin-bottom:1.25rem">Trending This Week</h2>
+      <h2 style="font-size:1.1rem;margin-bottom:1.25rem">Featured Blueprints</h2>
       <% if (trending.length === 0) { %>
         <div class="empty-state"><p>No trending posts this week.</p></div>
       <% } else { %>

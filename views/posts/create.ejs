@@ -24,15 +24,15 @@
   <div class="container" style="max-width:1100px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
       <div>
-        <h1 style="font-size:1.6rem;margin-bottom:0.1rem">New Post</h1>
-        <p class="text-muted">Write in Markdown. Preview updates live.</p>
+        <h1 style="font-size:1.6rem;margin-bottom:0.1rem">Draft New Blueprint</h1>
+        <p class="text-muted">Draft your ideas using Markdown structural primitives. Preview updates live.</p>
       </div>
     </div>
     <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
     <form id="postForm" action="/posts" method="POST" enctype="multipart/form-data">
 
       <div class="form-group" style="margin-bottom:1rem">
-        <input type="text" id="title" name="title" placeholder="Your post title…" value="<%= values.title || '' %>"
+        <input type="text" id="title" name="title" placeholder="The name of your blueprint…" value="<%= values.title || '' %>"
                required style="font-size:1.2rem;font-weight:600;padding:0.75rem 1rem" />
       </div>
 
@@ -43,7 +43,7 @@
         </div>
         <div class="editor-pane">
           <div class="editor-label">👁 Preview</div>
-          <div class="preview-pane" id="preview"><span class="preview-placeholder">Preview will appear here…</span></div>
+          <div class="preview-pane" id="preview"><span class="preview-placeholder">Your blueprint preview will appear here…</span></div>
         </div>
       </div>
 
@@ -59,8 +59,8 @@
       </div>
 
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
-        <button type="submit" name="status" value="published" class="btn btn-primary">🚀 Publish</button>
-        <button type="submit" name="status" value="draft" class="btn btn-outline">💾 Save Draft</button>
+        <button type="submit" name="status" value="published" class="btn btn-primary">🚀 Commission</button>
+        <button type="submit" name="status" value="draft" class="btn btn-outline">💾 Save Sketch</button>
         <a href="/" class="btn btn-ghost">Cancel</a>
       </div>
     </form>

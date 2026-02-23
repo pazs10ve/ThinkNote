@@ -5,7 +5,7 @@ import { generateSlug } from '../services/slugService.js';
 import { marked } from 'marked';
 
 export const showCreate = (req, res) => {
-  res.render('posts/create', { title: 'New Post — ThinkNote', error: null, values: {} });
+  res.render('posts/create', { title: 'Draft Blueprint — ThinkNote', error: null, values: {} });
 };
 
 export const create = async (req, res) => {
@@ -24,7 +24,7 @@ export const create = async (req, res) => {
     });
     res.redirect(`/post/${post.slug}`);
   } catch (err) {
-    res.render('posts/create', { title: 'New Post — ThinkNote', error: err.message, values: req.body });
+    res.render('posts/create', { title: 'Draft Blueprint — ThinkNote', error: err.message, values: req.body });
   }
 };
 
@@ -33,7 +33,7 @@ export const detail = async (req, res) => {
     const post = await Post.findOne({ slug: req.params.slug, status: 'published' })
       .populate('author', 'username displayName avatarUrl bio followers');
 
-    if (!post) return res.render('error', { message: 'Post not found.', code: 404 });
+    if (!post) return res.render('error', { message: 'Blueprint not found in the workshop index.', code: 404 });
 
     const htmlBody = marked.parse(post.body);
     let userLiked = false, userBookmarked = false, userFollowsAuthor = false;
@@ -57,28 +57,28 @@ export const detail = async (req, res) => {
       userFollowsAuthor,
     });
   } catch (err) {
-    res.render('error', { message: 'Could not load post.', code: 500 });
+    res.render('error', { message: 'Could not load your blueprint.', code: 500 });
   }
 };
 
 export const showEdit = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.render('error', { message: 'Post not found.', code: 404 });
+    if (!post) return res.render('error', { message: 'Blueprint not found in the workshop index.', code: 404 });
     if (post.author.toString() !== res.locals.currentUser._id.toString())
-      return res.render('error', { message: 'Forbidden.', code: 403 });
-    res.render('posts/edit', { title: 'Edit Post — ThinkNote', post, error: null });
+      return res.render('error', { message: 'Access denied: You are not the commissioned architect.', code: 403 });
+    res.render('posts/edit', { title: 'Refine Blueprint — ThinkNote', post, error: null });
   } catch (err) {
-    res.render('error', { message: 'Could not load post.', code: 500 });
+    res.render('error', { message: 'Could not load your blueprint.', code: 500 });
   }
 };
 
 export const update = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.render('error', { message: 'Post not found.', code: 404 });
+    if (!post) return res.render('error', { message: 'Blueprint not found in the workshop index.', code: 404 });
     if (post.author.toString() !== res.locals.currentUser._id.toString())
-      return res.render('error', { message: 'Forbidden.', code: 403 });
+      return res.render('error', { message: 'Access denied: You are not the commissioned architect.', code: 403 });
 
     const { title, body, tags, status } = req.body;
     post.title = title || post.title;
@@ -96,10 +96,10 @@ export const update = async (req, res) => {
 export const delete_ = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.render('error', { message: 'Post not found.', code: 404 });
+    if (!post) return res.render('error', { message: 'Blueprint not found in the workshop index.', code: 404 });
     const isOwner = post.author.toString() === res.locals.currentUser._id.toString();
     const isAdmin = res.locals.currentUser.role === 'admin';
-    if (!isOwner && !isAdmin) return res.render('error', { message: 'Forbidden.', code: 403 });
+    if (!isOwner && !isAdmin) return res.render('error', { message: 'Access denied: You are not the commissioned architect.', code: 403 });
     await post.deleteOne();
     res.redirect('/');
   } catch (err) {
@@ -115,7 +115,7 @@ export const bookmarks = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate({ path: 'post', populate: { path: 'author', select: 'username displayName avatarUrl' } });
     const posts = items.map(b => b.post).filter(Boolean);
-    res.render('bookmarks', { title: 'Bookmarks — ThinkNote', posts });
+    res.render('bookmarks', { title: 'Archived Blueprints — ThinkNote', posts });
   } catch (err) {
     res.render('error', { message: 'Could not load bookmarks.', code: 500 });
   }

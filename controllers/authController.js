@@ -4,7 +4,7 @@ import User from '../models/User.js';
 
 export const showRegister = (req, res) => {
   if (res.locals.currentUser) return res.redirect('/');
-  res.render('auth/register', { title: 'Create Account — ThinkNote', error: null, values: {} });
+  res.render('auth/register', { title: 'Begin Your Apprenticeship — ThinkNote', error: null, values: {} });
 };
 
 export const register = async (req, res) => {
@@ -23,15 +23,15 @@ export const register = async (req, res) => {
       verifyTokenExp: Date.now() + 24 * 60 * 60 * 1000,
     });
     console.log(`[DEV] Verify URL: ${process.env.BASE_URL}/auth/verify/${verifyToken}`);
-    res.render('auth/register-success', { title: 'Check Your Email — ThinkNote', email });
+    res.render('auth/register-success', { title: 'Credential Validation — ThinkNote', email });
   } catch (err) {
-    res.render('auth/register', { title: 'Create Account — ThinkNote', error: err.message, values: req.body });
+    res.render('auth/register', { title: 'Begin Your Apprenticeship — ThinkNote', error: err.message, values: req.body });
   }
 };
 
 export const showLogin = (req, res) => {
   if (res.locals.currentUser) return res.redirect('/');
-  res.render('auth/login', { title: 'Sign In — ThinkNote', error: null });
+  res.render('auth/login', { title: 'Enter the Workshop — ThinkNote', error: null });
 };
 
 export const login = async (req, res) => {
@@ -53,7 +53,7 @@ export const login = async (req, res) => {
     });
     res.redirect('/');
   } catch (err) {
-    res.render('auth/login', { title: 'Sign In — ThinkNote', error: err.message });
+    res.render('auth/login', { title: 'Enter the Workshop — ThinkNote', error: err.message });
   }
 };
 
@@ -68,19 +68,19 @@ export const verifyEmail = async (req, res) => {
       verifyToken: req.params.token,
       verifyTokenExp: { $gt: Date.now() },
     });
-    if (!user) return res.render('error', { message: 'Verification link is invalid or expired.', code: 400 });
+    if (!user) return res.render('error', { message: 'Credential validation window has closed. Please re-verify.', code: 400 });
     user.isVerified = true;
     user.verifyToken = undefined;
     user.verifyTokenExp = undefined;
     await user.save();
-    res.render('auth/verified', { title: 'Email Verified — ThinkNote' });
+    res.render('auth/verified', { title: 'Credentials Validated — ThinkNote' });
   } catch (err) {
     res.render('error', { message: 'Something went wrong.', code: 500 });
   }
 };
 
 export const showForgotPassword = (req, res) => {
-  res.render('auth/forgot-password', { title: 'Forgot Password — ThinkNote', message: null, error: null });
+  res.render('auth/forgot-password', { title: 'Recover Credentials — ThinkNote', message: null, error: null });
 };
 
 export const forgotPassword = async (req, res) => {
@@ -95,25 +95,25 @@ export const forgotPassword = async (req, res) => {
       console.log(`[DEV] Reset URL: ${process.env.BASE_URL}/auth/reset-password/${resetToken}`);
     }
     res.render('auth/forgot-password', {
-      title: 'Forgot Password — ThinkNote',
-      message: 'If that email exists, a reset link has been sent.',
+      title: 'Recover Credentials — ThinkNote',
+      message: 'If that email exists in our records, a recovery link has been sent.',
       error: null,
     });
   } catch (err) {
-    res.render('auth/forgot-password', { title: 'Forgot Password — ThinkNote', message: null, error: 'Something went wrong.' });
+    res.render('auth/forgot-password', { title: 'Recover Credentials — ThinkNote', message: null, error: 'Structural error. Please try again later.' });
   }
 };
 
 export const showResetPassword = async (req, res) => {
   const user = await User.findOne({ resetToken: req.params.token, resetTokenExp: { $gt: Date.now() } });
-  if (!user) return res.render('error', { message: 'Reset link is invalid or has expired.', code: 400 });
-  res.render('auth/reset-password', { title: 'Reset Password — ThinkNote', token: req.params.token, error: null });
+  if (!user) return res.render('error', { message: 'Credential reset window has closed.', code: 400 });
+  res.render('auth/reset-password', { title: 'Update Credentials — ThinkNote', token: req.params.token, error: null });
 };
 
 export const resetPassword = async (req, res) => {
   try {
     const user = await User.findOne({ resetToken: req.params.token, resetTokenExp: { $gt: Date.now() } });
-    if (!user) return res.render('error', { message: 'Reset link is invalid or has expired.', code: 400 });
+    if (!user) return res.render('error', { message: 'Credential reset window has closed.', code: 400 });
     const { password } = req.body;
     if (!password || password.length < 8) throw new Error('Password must be at least 8 characters.');
     user.passwordHash = password;
@@ -122,6 +122,6 @@ export const resetPassword = async (req, res) => {
     await user.save();
     res.redirect('/auth/login');
   } catch (err) {
-    res.render('auth/reset-password', { title: 'Reset Password — ThinkNote', token: req.params.token, error: err.message });
+    res.render('auth/reset-password', { title: 'Update Credentials — ThinkNote', token: req.params.token, error: err.message });
   }
 };

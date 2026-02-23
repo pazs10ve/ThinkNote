@@ -45,7 +45,7 @@
         <strong><%= post.author.displayName %></strong>
       </a>
       <time><%= formatDate(post.publishedAt) %></time>
-      <span class="text-muted" style="font-size:0.82rem"><%= post.viewCount %> views</span>
+      <span class="text-muted" style="font-size:0.82rem"><%= post.viewCount %> inspections</span>
     </div>
 
     <div class="post-body"><%- htmlBody %></div>
@@ -57,7 +57,7 @@
           ♥ <span id="likeCount"><%= post.likeCount %></span>
         </button>
         <button class="action-btn <%= userBookmarked ? 'active' : '' %>" id="bookmarkBtn" data-post-id="<%= post._id %>">
-          🔖 <%= userBookmarked ? 'Saved' : 'Save' %>
+          🔖 <%= userBookmarked ? 'Archived' : 'Archive' %>
         </button>
         <% if (currentUser._id.toString() === post.author._id.toString()) { %>
           <a href="/posts/<%= post._id %>/edit" class="action-btn">✏️ Edit</a>

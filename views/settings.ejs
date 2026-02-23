@@ -8,7 +8,7 @@
 <%- include('partials/nav') %>
 <main class="main-content">
   <div class="container" style="max-width:720px">
-    <h1 style="font-size:1.5rem;margin-bottom:2rem">Account Settings</h1>
+    <h1 style="font-size:1.5rem;margin-bottom:2rem">Workshop Preferences</h1>
 
     <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
     <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
@@ -28,13 +28,13 @@
 
     <!-- Profile info -->
     <form action="/settings" method="POST" class="card" style="margin-bottom:1.5rem">
-      <h2 style="font-size:1.05rem;margin-bottom:1.25rem">Profile Info</h2>
+      <h2 style="font-size:1.05rem;margin-bottom:1.25rem">Architect Credentials</h2>
       <div class="form-group">
-        <label for="displayName">Display Name</label>
+        <label for="displayName">Architect Name</label>
         <input type="text" id="displayName" name="displayName" value="<%= currentUser.displayName %>" required maxlength="60" />
       </div>
       <div class="form-group">
-        <label for="bio">Bio <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(max 300 chars)</span></label>
+        <label for="bio">Philosophical Vision <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(max 300 chars)</span></label>
         <textarea id="bio" name="bio" rows="3" maxlength="300"><%= currentUser.bio || '' %></textarea>
       </div>
       <div class="form-group">
@@ -49,7 +49,7 @@
         <label for="github">GitHub username</label>
         <input type="text" id="github" name="github" placeholder="yourusername" value="<%= currentUser.github || '' %>" />
       </div>
-      <button type="submit" class="btn btn-primary">Save Changes</button>
+      <button type="submit" class="btn btn-primary">Update Credentials</button>
     </form>
   </div>
 </main>
