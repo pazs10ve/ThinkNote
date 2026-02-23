@@ -4,7 +4,7 @@
 
 ---
 
-## � The "Golden Hour" Vision
+##  The "Golden Hour" Vision
 ThinkNote is not just a tool; it is an aesthetic experience. The platform is designed around the **Golden Hour Vision**: the precise moment when the afternoon sun casts a warm, orange-gold glow across an architect's drafting table.
 
 *   **Philosophical Focus**: We believe that the best ideas are engineered, not just written. Every post is treated as a "Blueprint" a structured, valuable document that contributes to a larger body of work.
@@ -53,7 +53,7 @@ ThinkNote is not just a tool; it is an aesthetic experience. The platform is des
 
 ---
 
-## 🏁 Getting Started
+##  Getting Started
 Refer to the [deployment guide](docs/deployment.md) for full production instructions, or follow these steps for local development:
 
 1.  **Clone & Install**: `npm install`
