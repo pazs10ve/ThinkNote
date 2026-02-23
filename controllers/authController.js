@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import User from '../models/User.js';
+import mailService from '../services/mailService.js';
 
 export const showRegister = (req, res) => {
   if (res.locals.currentUser) return res.redirect('/');
@@ -23,6 +24,7 @@ export const register = async (req, res) => {
       verifyTokenExp: Date.now() + 24 * 60 * 60 * 1000,
     });
     console.log(`[DEV] Verify URL: ${process.env.BASE_URL}/auth/verify/${verifyToken}`);
+    await mailService.sendVerificationEmail(email, verifyToken);
     res.render('auth/register-success', { title: 'Credential Validation — ThinkNote', email });
   } catch (err) {
     res.render('auth/register', { title: 'Begin Your Apprenticeship — ThinkNote', error: err.message, values: req.body });
@@ -93,6 +95,7 @@ export const forgotPassword = async (req, res) => {
       user.resetTokenExp = Date.now() + 1 * 60 * 60 * 1000;
       await user.save();
       console.log(`[DEV] Reset URL: ${process.env.BASE_URL}/auth/reset-password/${resetToken}`);
+      await mailService.sendPasswordResetEmail(email, resetToken);
     }
     res.render('auth/forgot-password', {
       title: 'Recover Credentials — ThinkNote',

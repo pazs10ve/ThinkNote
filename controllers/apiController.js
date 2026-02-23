@@ -4,6 +4,7 @@ import Post from '../models/Post.js';
 import User from '../models/User.js';
 import Comment from '../models/Comment.js';
 import Notification from '../models/Notification.js';
+import mailService from '../services/mailService.js';
 
 const json = (res, data, status = 200) => res.status(status).json(data);
 
@@ -22,7 +23,18 @@ export const toggleLike = async (req, res) => {
       await Post.updateOne({ _id: post._id }, { $inc: { likeCount: 1 } });
       liked = true;
     }
-    const updated = await Post.findById(post._id).select('likeCount');
+    const updated = await Post.findById(post._id).select('likeCount').populate('author');
+    
+    // Email Notification for Like
+    if (liked && updated.author.notifyOnLike && updated.author._id.toString() !== res.locals.currentUser._id.toString()) {
+      mailService.sendLikeNotification(
+        updated.author.email,
+        res.locals.currentUser.displayName,
+        post.title,
+        post.slug
+      ).catch(err => console.error('Like email failed:', err));
+    }
+
     json(res, { success: true, liked, likeCount: updated.likeCount });
   } catch (err) {
     json(res, { success: false, message: err.message }, 500);
@@ -68,6 +80,16 @@ export const toggleFollow = async (req, res) => {
       target.followers.push(me._id);
     }
     await Promise.all([me.save(), target.save()]);
+
+    // Email Notification for Follow
+    if (!isFollowing && target.notifyOnFollow) {
+      mailService.sendFollowNotification(
+        target.email,
+        me.displayName,
+        me.username
+      ).catch(err => console.error('Follow email failed:', err));
+    }
+
     json(res, { success: true, following: !isFollowing, followerCount: target.followers.length });
   } catch (err) {
     json(res, { success: false, message: err.message }, 500);
@@ -103,6 +125,19 @@ export const addComment = async (req, res) => {
     });
     await Post.updateOne({ _id: req.params.postId }, { $inc: { commentCount: 1 } });
     await comment.populate('author', 'username displayName avatarUrl');
+
+    // Email Notification for Comment
+    const post = await Post.findById(req.params.postId).populate('author');
+    if (post.author.notifyOnComment && post.author._id.toString() !== res.locals.currentUser._id.toString()) {
+      mailService.sendCommentNotification(
+        post.author.email,
+        res.locals.currentUser.displayName,
+        post.title,
+        post.slug,
+        body.substring(0, 100) + (body.length > 100 ? '...' : '')
+      ).catch(err => console.error('Comment email failed:', err));
+    }
+
     json(res, { success: true, data: comment });
   } catch (err) {
     json(res, { success: false, message: err.message }, 500);
