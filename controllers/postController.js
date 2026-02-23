@@ -30,10 +30,20 @@ export const create = async (req, res) => {
 
 export const detail = async (req, res) => {
   try {
-    const post = await Post.findOne({ slug: req.params.slug, status: 'published' })
+    const post = await Post.findOne({ slug: req.params.slug })
       .populate('author', 'username displayName avatarUrl bio followers');
 
-    if (!post) return res.render('error', { message: 'Blueprint not found in the workshop index.', code: 404 });
+    if (!post) {
+      return res.render('error', { message: 'Blueprint not found in the workshop index.', code: 404 });
+    }
+
+    // Check if post is draft and if user is allowed to see it
+    const isOwner = res.locals.currentUser && res.locals.currentUser._id.toString() === post.author._id.toString();
+    const isAdmin = res.locals.currentUser && res.locals.currentUser.role === 'admin';
+
+    if (post.status === 'draft' && !isOwner && !isAdmin) {
+      return res.render('error', { message: 'This architectural sketch is private.', code: 403 });
+    }
 
     const htmlBody = marked.parse(post.body);
     let userLiked = false, userBookmarked = false, userFollowsAuthor = false;

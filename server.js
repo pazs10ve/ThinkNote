@@ -26,6 +26,9 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
+// Trust proxy for express-rate-limit in production (Railway/Render)
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 connectDB();
 
