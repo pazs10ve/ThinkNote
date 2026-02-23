@@ -6,3 +6,4 @@ public/uploads/*
 docs
 tests
 .env.example
+.gitignore
