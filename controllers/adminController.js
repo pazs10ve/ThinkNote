@@ -2,22 +2,27 @@ import User from '../models/User.js';
 import Post from '../models/Post.js';
 
 export const dashboard = async (req, res) => {
-  const [userCount, postCount, stats] = await Promise.all([
-    User.countDocuments(),
-    Post.countDocuments({ status: 'published' }),
-    Post.aggregate([
-      { $match: { status: 'published' } },
-      { $group: { _id: null, totalViews: { $sum: '$viewCount' }, totalLikes: { $sum: '$likeCount' } } }
-    ])
-  ]);
-  const s = stats[0] || { totalViews: 0, totalLikes: 0 };
-  res.render('admin/dashboard', { 
-    title: 'Admin Dashboard — ThinkNote', 
-    userCount, 
-    postCount, 
-    totalViews: s.totalViews, 
-    totalLikes: s.totalLikes 
-  });
+  try {
+    const [userCount, postCount, stats] = await Promise.all([
+      User.countDocuments(),
+      Post.countDocuments({ status: 'published' }),
+      Post.aggregate([
+        { $match: { status: 'published' } },
+        { $group: { _id: null, totalViews: { $sum: '$viewCount' }, totalLikes: { $sum: '$likeCount' } } }
+      ])
+    ]);
+    const s = stats[0] || { totalViews: 0, totalLikes: 0 };
+    res.render('admin/dashboard', { 
+      title: 'Admin Dashboard — ThinkNote', 
+      userCount, 
+      postCount, 
+      totalViews: s.totalViews, 
+      totalLikes: s.totalLikes 
+    });
+  } catch (err) {
+    console.error('Admin Dashboard Error:', err);
+    res.status(500).render('error', { message: 'Admin dashboard failed to load. Check server logs.', code: 500 });
+  }
 };
 
 export const users = async (req, res) => {

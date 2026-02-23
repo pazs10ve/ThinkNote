@@ -5,3 +5,4 @@ public/uploads/*
 *.log
 docs
 tests
+.env.example
