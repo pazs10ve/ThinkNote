@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
-<%- include('../partials/nav') %>
+<%- include('partials/nav') %>
 <main class="main-content">
   <div class="container">
     <h1 style="font-size:1.75rem;margin-bottom:0.35rem">Explore</h1>
@@ -33,7 +33,7 @@
         <div class="empty-state"><p>No trending posts this week.</p></div>
       <% } else { %>
         <div class="post-list">
-          <% trending.forEach(post => { %><%- include('../partials/post-card', { post }) %><% }) %>
+          <% trending.forEach(post => { %><%- include('partials/post-card', { post }) %><% }) %>
         </div>
       <% } %>
     </section>

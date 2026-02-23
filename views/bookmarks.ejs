@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
-<%- include('../partials/nav') %>
+<%- include('partials/nav') %>
 <main class="main-content">
   <div class="container" style="max-width:860px">
     <h1 style="font-size:1.5rem;margin-bottom:0.35rem">Bookmarks</h1>
@@ -21,7 +21,7 @@
       </div>
     <% } else { %>
       <div class="post-list">
-        <% posts.forEach(post => { %><%- include('../partials/post-card', { post }) %><% }) %>
+        <% posts.forEach(post => { %><%- include('partials/post-card', { post }) %><% }) %>
       </div>
     <% } %>
   </div>
