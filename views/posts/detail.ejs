@@ -59,6 +59,9 @@
         <button class="action-btn <%= userBookmarked ? 'active' : '' %>" id="bookmarkBtn" data-post-id="<%= post._id %>">
           🔖 <%= userBookmarked ? 'Archived' : 'Archive' %>
         </button>
+        <button class="action-btn" id="shareBtn" title="Copy link to blueprint">
+          🔗 Share
+        </button>
         <% if (currentUser._id.toString() === post.author._id.toString()) { %>
           <a href="/posts/<%= post._id %>/edit" class="action-btn">✏️ Edit</a>
           <form action="/posts/<%= post._id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('Delete this post?')">

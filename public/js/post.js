@@ -26,6 +26,21 @@ if (bookmarkBtn) {
   });
 }
 
+// ── Share button ────────────────────────────────
+const shareBtn = document.getElementById('shareBtn');
+if (shareBtn) {
+  shareBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href);
+    const originalText = shareBtn.innerHTML;
+    shareBtn.innerHTML = '✅ Copied!';
+    shareBtn.classList.add('active');
+    setTimeout(() => {
+      shareBtn.innerHTML = originalText;
+      shareBtn.classList.remove('active');
+    }, 2000);
+  });
+}
+
 // ── Follow button ─────────────────────────────────
 const followBtn = document.getElementById('followBtn');
 if (followBtn) {

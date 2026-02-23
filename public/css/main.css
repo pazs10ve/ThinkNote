@@ -546,9 +546,27 @@ textarea { resize: vertical; min-height: 160px; line-height: 1.65; }
   .feed-layout { grid-template-columns: 1fr; }
   .feed-sidebar { position: static; }
 }
+
 @media (max-width: 768px) {
-  :root { --fs-base:18px; --fs-sm:16px; --nav-h:72px; }
-  .main-content { padding: 2rem 1.25rem 4rem; }
-  .navbar { padding: 0 1.25rem; }
+  :root { 
+    --fs-base: 18px; 
+    --fs-sm: 16px; 
+    --fs-xs: 15px;
+    --nav-h: 72px; 
+  }
+  .main-content { padding: 1.5rem 1rem 4rem; }
+  .navbar { padding: 0 1rem; }
+  .navbar-inner { gap: 1rem; }
   .nav-link span { display: none; }
+  .nav-link { padding: 0.5rem; }
+  
+  h1 { font-size: var(--fs-2xl); }
+  h2 { font-size: var(--fs-xl); }
+}
+
+@media (max-width: 480px) {
+  .navbar-logo span { display: none; } /* Show only icon on very small screens */
+  .action-bar { gap: 0.5rem; }
+  .action-btn { padding: 0.4rem 0.75rem; font-size: 0.75rem; }
+  .post-card-body { padding: 1.25rem; }
 }

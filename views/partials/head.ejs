@@ -1,7 +1,26 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title><%= typeof title !== 'undefined' ? (title + ' — ThinkNote') : 'ThinkNote' %></title>
-<meta name="description" content="ThinkNote — Read and write ideas that matter." />
+<% 
+  const siteTitle = 'ThinkNote';
+  const displayTitle = typeof title !== 'undefined' ? title : siteTitle;
+  const siteDescription = 'The Architect’s Workshop — A premium digital space for engineering ideas and building intellectual legacies.';
+  const displayDescription = typeof description !== 'undefined' ? description : siteDescription;
+%>
+<title><%= displayTitle %></title>
+<meta name="description" content="<%= displayDescription %>" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="<%= displayTitle %>" />
+<meta property="og:description" content="<%= displayDescription %>" />
+<meta property="og:image" content="/img/brand/logo.svg" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="<%= displayTitle %>" />
+<meta name="twitter:description" content="<%= displayDescription %>" />
+<meta name="twitter:image" content="/img/brand/logo.svg" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/css/main.css" />

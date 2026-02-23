@@ -2,11 +2,22 @@ import User from '../models/User.js';
 import Post from '../models/Post.js';
 
 export const dashboard = async (req, res) => {
-  const [userCount, postCount] = await Promise.all([
+  const [userCount, postCount, stats] = await Promise.all([
     User.countDocuments(),
     Post.countDocuments({ status: 'published' }),
+    Post.aggregate([
+      { $match: { status: 'published' } },
+      { $group: { _id: null, totalViews: { $sum: '$viewCount' }, totalLikes: { $sum: '$likeCount' } } }
+    ])
   ]);
-  res.render('admin/dashboard', { title: 'Admin Dashboard — ThinkNote', userCount, postCount });
+  const s = stats[0] || { totalViews: 0, totalLikes: 0 };
+  res.render('admin/dashboard', { 
+    title: 'Admin Dashboard — ThinkNote', 
+    userCount, 
+    postCount, 
+    totalViews: s.totalViews, 
+    totalLikes: s.totalLikes 
+  });
 };
 
 export const users = async (req, res) => {

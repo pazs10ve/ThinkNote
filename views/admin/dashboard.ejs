@@ -13,14 +13,22 @@
     </div>
 
     <!-- Stats -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.25rem;margin-bottom:2.5rem">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2.5rem">
       <div class="card" style="text-align:center">
-        <div style="font-size:2.5rem;font-weight:700;color:var(--accent)"><%= userCount %></div>
-        <div style="color:var(--text-muted);font-size:0.9rem;margin-top:0.25rem">Total Users</div>
+        <div style="font-size:2rem;font-weight:700;color:var(--accent)"><%= userCount %></div>
+        <div style="color:var(--text-muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Fellow Builders</div>
       </div>
       <div class="card" style="text-align:center">
-        <div style="font-size:2.5rem;font-weight:700;color:var(--accent)"><%= postCount %></div>
-        <div style="color:var(--text-muted);font-size:0.9rem;margin-top:0.25rem">Published Posts</div>
+        <div style="font-size:2rem;font-weight:700;color:var(--accent)"><%= postCount %></div>
+        <div style="color:var(--text-muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Commissioned Blueprints</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:2rem;font-weight:700;color:var(--accent)"><%= totalViews %></div>
+        <div style="color:var(--text-muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Blueprint Inspections</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:2rem;font-weight:700;color:var(--accent)"><%= totalLikes %></div>
+        <div style="color:var(--text-muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Architectural Endorsements</div>
       </div>
     </div>
 
