@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<%- include('../../partials/nav') %>
+<main class="main-content">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap">
+      <h1 style="font-size:1.5rem">⚙️ Admin Dashboard</h1>
+      <span class="tag" style="background:rgba(248,113,113,0.15);color:var(--error)">Admin Only</span>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.25rem;margin-bottom:2.5rem">
+      <div class="card" style="text-align:center">
+        <div style="font-size:2.5rem;font-weight:700;color:var(--accent)"><%= userCount %></div>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-top:0.25rem">Total Users</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:2.5rem;font-weight:700;color:var(--accent)"><%= postCount %></div>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-top:0.25rem">Published Posts</div>
+      </div>
+    </div>
+
+    <!-- Quick links -->
+    <div style="display:flex;gap:1rem;flex-wrap:wrap">
+      <a href="/admin/users" class="btn btn-primary">👥 Manage Users</a>
+      <a href="/admin/posts" class="btn btn-outline">📝 Manage Posts</a>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

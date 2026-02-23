@@ -10,6 +10,7 @@ import { dirname, join } from 'path';
 
 import connectDB from './config/db.js';
 import { optionalAuth } from './middleware/auth.js';
+import passportInit from './config/passport.js';
 
 import feedRouter from './routes/feed.js';
 import authRouter from './routes/auth.js';
@@ -47,6 +48,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(methodOverride('_method'));
+app.use(passportInit.initialize()); // Passport (session: false — JWT only)
 
 // Static files
 app.use(express.static(join(__dirname, 'public')));
@@ -84,3 +86,4 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 ThinkNote running at http://localhost:${PORT}`));
+

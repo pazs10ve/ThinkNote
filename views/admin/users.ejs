@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <style>
+    table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+    th { text-align:left; color:var(--text-muted); font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.6rem 1rem; border-bottom:1px solid var(--border); }
+    td { padding:0.75rem 1rem; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text); }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:var(--bg-elevated); }
+    .badge { display:inline-block; padding:0.15rem 0.5rem; border-radius:var(--radius-full); font-size:0.75rem; font-weight:600; }
+    .badge-admin  { background:rgba(124,106,247,0.15); color:var(--accent); }
+    .badge-user   { background:var(--bg-elevated); color:var(--text-muted); }
+    .badge-ok     { background:rgba(74,222,128,0.12); color:var(--success); }
+    .badge-warn   { background:rgba(248,113,113,0.12); color:var(--error); }
+  </style>
+</head>
+<body>
+<%- include('../../partials/nav') %>
+<main class="main-content">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap">
+      <a href="/admin" style="color:var(--text-muted);font-size:0.88rem">← Dashboard</a>
+      <h1 style="font-size:1.4rem">👥 Manage Users</h1>
+      <span style="color:var(--text-muted);font-size:0.88rem">(<%= users.length %> total)</span>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Verified</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u => { %>
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.6rem">
+                <img src="<%= u.avatarUrl || '/img/default-avatar.png' %>" style="width:32px;height:32px;border-radius:50%;object-fit:cover" alt="" />
+                <div>
+                  <div style="font-weight:500"><%= u.displayName %></div>
+                  <div style="color:var(--text-subtle);font-size:0.8rem">@<%= u.username %></div>
+                </div>
+              </div>
+            </td>
+            <td style="color:var(--text-muted)"><%= u.email %></td>
+            <td><span class="badge badge-<%= u.role === 'admin' ? 'admin' : 'user' %>"><%= u.role %></span></td>
+            <td><span class="badge badge-<%= u.isVerified ? 'ok' : 'warn' %>"><%= u.isVerified ? '✓ Yes' : '✗ No' %></span></td>
+            <td><span class="badge badge-<%= u.isSuspended ? 'warn' : 'ok' %>"><%= u.isSuspended ? 'Suspended' : 'Active' %></span></td>
+            <td style="color:var(--text-muted)"><%= new Date(u.createdAt).toLocaleDateString() %></td>
+            <td>
+              <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                <form action="/admin/users/<%= u._id %>/suspend" method="POST" style="display:inline">
+                  <button type="submit" class="btn btn-sm btn-outline" style="<%= u.isSuspended ? 'border-color:var(--success);color:var(--success)' : 'border-color:var(--warning);color:var(--warning)' %>">
+                    <%= u.isSuspended ? 'Unsuspend' : 'Suspend' %>
+                  </button>
+                </form>
+                <form action="/admin/users/<%= u._id %>/delete" method="POST" style="display:inline"
+                      onsubmit="return confirm('Permanently delete @<%= u.username %>?')">
+                  <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

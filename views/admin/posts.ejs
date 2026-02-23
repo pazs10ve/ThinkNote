@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <style>
+    table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+    th { text-align:left; color:var(--text-muted); font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.6rem 1rem; border-bottom:1px solid var(--border); }
+    td { padding:0.75rem 1rem; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text); }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:var(--bg-elevated); }
+    .badge { display:inline-block; padding:0.15rem 0.5rem; border-radius:var(--radius-full); font-size:0.75rem; font-weight:600; }
+    .badge-pub  { background:rgba(74,222,128,0.12); color:var(--success); }
+    .badge-draft { background:var(--bg-elevated); color:var(--text-muted); }
+  </style>
+</head>
+<body>
+<%- include('../../partials/nav') %>
+<main class="main-content">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap">
+      <a href="/admin" style="color:var(--text-muted);font-size:0.88rem">← Dashboard</a>
+      <h1 style="font-size:1.4rem">📝 Manage Posts</h1>
+      <span style="color:var(--text-muted);font-size:0.88rem">(<%= posts.length %> total)</span>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Status</th>
+            <th>Likes</th>
+            <th>Comments</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% posts.forEach(p => { %>
+          <tr>
+            <td>
+              <a href="/post/<%= p.slug %>" style="color:var(--text);font-weight:500" target="_blank">
+                <%= p.title.length > 60 ? p.title.substring(0,60) + '…' : p.title %>
+              </a>
+            </td>
+            <td>
+              <a href="/u/<%= p.author.username %>" style="color:var(--text-muted);font-size:0.85rem">
+                @<%= p.author.username %>
+              </a>
+            </td>
+            <td><span class="badge badge-<%= p.status === 'published' ? 'pub' : 'draft' %>"><%= p.status %></span></td>
+            <td style="color:var(--text-muted)"><%= p.likeCount %></td>
+            <td style="color:var(--text-muted)"><%= p.commentCount %></td>
+            <td style="color:var(--text-muted)"><%= new Date(p.createdAt).toLocaleDateString() %></td>
+            <td>
+              <form action="/admin/posts/<%= p._id %>/delete" method="POST" style="display:inline"
+                    onsubmit="return confirm('Delete this post?')">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

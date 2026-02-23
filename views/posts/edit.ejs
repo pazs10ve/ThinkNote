@@ -6,47 +6,77 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/main.css" />
+  <style>
+    .editor-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .editor-pane { display: flex; flex-direction: column; }
+    .editor-label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    .preview-pane { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.25rem; min-height: 360px; overflow-y: auto; font-family: var(--font-serif); font-size: 1rem; line-height: 1.8; color: var(--text); }
+    .preview-pane h1,.preview-pane h2,.preview-pane h3 { font-family: var(--font-sans); margin: 1.25rem 0 0.5rem; }
+    .preview-pane code { background: var(--bg-card); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.85em; }
+    .preview-pane pre { background: var(--bg-card); padding: 1rem; border-radius: var(--radius-sm); overflow-x: auto; }
+    .preview-pane blockquote { border-left: 3px solid var(--accent); margin: 1rem 0; padding: 0.25rem 1rem; color: var(--text-muted); }
+    .preview-pane p { margin-bottom: 1rem; }
+    #body { min-height: 360px; font-family: monospace; font-size: 0.9rem; }
+    @media (max-width: 800px) { .editor-wrap { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
 <%- include('../partials/nav') %>
 <main class="main-content">
-  <div class="container" style="max-width:780px">
-    <div style="margin-bottom:2rem">
-      <h1 style="font-size:1.75rem">Edit Post</h1>
+  <div class="container" style="max-width:1100px">
+    <div style="margin-bottom:1.5rem">
+      <h1 style="font-size:1.6rem;margin-bottom:0.1rem">Edit Post</h1>
     </div>
     <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
-    <form action="/posts/<%= post._id %>" method="POST" enctype="multipart/form-data" class="card" style="padding:2rem">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" name="title" value="<%= post.title %>" required />
+    <form action="/posts/<%= post._id %>" method="POST" enctype="multipart/form-data">
+
+      <div class="form-group" style="margin-bottom:1rem">
+        <input type="text" id="title" name="title" value="<%= post.title %>" required style="font-size:1.2rem;font-weight:600;padding:0.75rem 1rem" />
       </div>
-      <div class="form-group">
-        <label for="body">Content <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(Markdown)</span></label>
-        <textarea id="body" name="body" rows="18" required><%= post.body %></textarea>
-      </div>
-      <div class="form-group">
-        <label for="tags">Tags <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(comma-separated)</span></label>
-        <input type="text" id="tags" name="tags" value="<%= post.tags.join(', ') %>" />
-      </div>
-      <% if (post.coverImage) { %>
-        <div class="form-group">
-          <label>Current Cover</label>
-          <img src="<%= post.coverImage %>" alt="Cover" style="width:100%;max-height:200px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:0.5rem" />
+
+      <div class="editor-wrap" style="margin-bottom:1rem">
+        <div class="editor-pane">
+          <div class="editor-label">✏️ Markdown</div>
+          <textarea id="body" name="body" required><%= post.body %></textarea>
         </div>
-      <% } %>
-      <div class="form-group">
-        <label for="coverImage">New Cover Image <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(optional)</span></label>
-        <input type="file" id="coverImage" name="coverImage" accept="image/*" style="color:var(--text-muted)" />
+        <div class="editor-pane">
+          <div class="editor-label">👁 Preview</div>
+          <div class="preview-pane" id="preview"></div>
+        </div>
       </div>
-      <div style="display:flex;gap:1rem;margin-top:0.5rem;flex-wrap:wrap">
-        <button type="submit" name="status" value="published" class="btn btn-primary">Save & Publish</button>
-        <button type="submit" name="status" value="draft" class="btn btn-outline">Save as Draft</button>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+        <div class="form-group" style="margin:0">
+          <label for="tags">Tags <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(comma-separated)</span></label>
+          <input type="text" id="tags" name="tags" value="<%= post.tags.join(', ') %>" />
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="coverImage">New Cover Image <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem">(optional)</span></label>
+          <% if (post.coverImage) { %>
+            <img src="<%= post.coverImage %>" alt="Current cover" style="height:40px;border-radius:4px;margin-bottom:0.4rem;object-fit:cover" />
+          <% } %>
+          <input type="file" id="coverImage" name="coverImage" accept="image/*" style="color:var(--text-muted)" />
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+        <button type="submit" name="status" value="published" class="btn btn-primary">🚀 Save & Publish</button>
+        <button type="submit" name="status" value="draft" class="btn btn-outline">💾 Save Draft</button>
         <a href="/post/<%= post.slug %>" class="btn btn-ghost">Cancel</a>
       </div>
     </form>
   </div>
 </main>
 <footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="/js/main.js"></script>
+<script>
+  const body = document.getElementById('body');
+  const preview = document.getElementById('preview');
+  marked.setOptions({ breaks: true, gfm: true });
+  function updatePreview() { preview.innerHTML = marked.parse(body.value || ''); }
+  body.addEventListener('input', updatePreview);
+  updatePreview();
+</script>
 </body>
 </html>

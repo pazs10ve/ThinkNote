@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
       match: [/^[a-z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'],
     },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    passwordHash: { type: String, required: true },
+    passwordHash: { type: String },  // optional for OAuth users
     displayName: { type: String, required: true, trim: true, maxlength: 60 },
     bio: { type: String, default: '', maxlength: 300 },
     avatarUrl: { type: String, default: '/img/default-avatar.png' },
@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
     resetToken: { type: String },
     resetTokenExp: { type: Date },
     isSuspended: { type: Boolean, default: false },
+    // OAuth provider IDs (all optional — only set when user signs in via that provider)
+    googleId:   { type: String, index: true, sparse: true },
+    githubId:   { type: String, index: true, sparse: true },
+    linkedinId: { type: String, index: true, sparse: true },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     notifyOnFollow: { type: Boolean, default: true },
@@ -37,7 +41,8 @@ userSchema.virtual('followerCount').get(function () { return this.followers.leng
 userSchema.virtual('followingCount').get(function () { return this.following.length; });
 
 userSchema.pre('save', async function () {
-  if (!this.isModified('passwordHash')) return;
+  // Skip hashing if no password (OAuth user) or hash not modified
+  if (!this.passwordHash || !this.isModified('passwordHash')) return;
   this.passwordHash = await bcrypt.hash(this.passwordHash, 12);
 });
 
