@@ -1,18 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
   <% let extraCss = `
   <style>
+    .format-selector { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .format-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 0.4rem 1rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
+    .format-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
     .editor-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
     .editor-pane { display: flex; flex-direction: column; }
     .editor-label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
-    .preview-pane { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.25rem; min-height: 360px; overflow-y: auto; font-family: var(--font-serif); font-size: 1rem; line-height: 1.8; color: var(--text); }
+    .preview-pane { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.25rem; min-height: 70vh; overflow-y: auto; font-family: var(--font-serif); font-size: 1rem; line-height: 1.8; color: var(--text); }
     .preview-pane h1,.preview-pane h2,.preview-pane h3 { font-family: var(--font-sans); margin: 1.25rem 0 0.5rem; }
     .preview-pane code { background: var(--bg-card); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.85em; }
     .preview-pane pre { background: var(--bg-card); padding: 1rem; border-radius: var(--radius-sm); overflow-x: auto; }
     .preview-pane blockquote { border-left: 3px solid var(--accent); margin: 1rem 0; padding: 0.25rem 1rem; color: var(--text-muted); }
     .preview-pane p { margin-bottom: 1rem; }
-    #body { min-height: 360px; font-family: monospace; font-size: 0.9rem; }
+    .preview-placeholder { color: var(--text-subtle); font-style: italic; font-family: var(--font-sans); }
+    
+    .source-editor { min-height: 70vh; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); width: 100%; resize: vertical; }
+    
+    /* Quill Overrides */
+    .ql-toolbar { background: var(--bg-card); border-color: var(--border) !important; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+    .ql-container { border-color: var(--border) !important; border-radius: 0 0 var(--radius-sm) var(--radius-sm); font-family: var(--font-serif); font-size: 1rem; min-height: calc(70vh - 42px); }
+    .ql-editor { color: var(--text); min-height: calc(70vh - 42px); }
+    
     @media (max-width: 800px) { .editor-wrap { grid-template-columns: 1fr; } }
   </style>`; %>
   <%- include('../partials/head', { extraCss }) %>
@@ -20,7 +34,7 @@
 <body>
 <%- include('../partials/nav') %>
 <main class="main-content">
-  <div class="container" style="max-width:1100px">
+  <div class="container" style="max-width:1600px">
     <div style="margin-bottom:1.5rem">
       <h1 style="font-size:1.6rem;margin-bottom:0.1rem">Refine Blueprint</h1>
     </div>
@@ -31,14 +45,30 @@
         <input type="text" id="title" name="title" value="<%= post.title %>" required style="font-size:1.2rem;font-weight:600;padding:0.75rem 1rem" />
       </div>
 
+      <div class="format-selector">
+        <button type="button" class="format-btn <%= post.format === 'markdown' ? 'active' : '' %>" data-format="markdown">Markdown</button>
+        <button type="button" class="format-btn <%= post.format === 'richtext' ? 'active' : '' %>" data-format="richtext">Rich Text</button>
+        <button type="button" class="format-btn <%= post.format === 'latex' ? 'active' : '' %>" data-format="latex">LaTeX</button>
+      </div>
+      <input type="hidden" name="format" id="formatInput" value="<%= post.format || 'markdown' %>">
+
       <div class="editor-wrap" style="margin-bottom:1rem">
         <div class="editor-pane">
-          <div class="editor-label">✏️ Markdown</div>
-          <textarea id="body" name="body" required><%= post.body %></textarea>
+          <div class="editor-label" id="editorHeader">✏️ Markdown</div>
+          
+          <!-- Hidden master text area that actually submits -->
+          <textarea id="body" name="body" required style="display:none;"><%= post.body || '' %></textarea>
+          
+          <!-- Markdown / LaTeX Editor -->
+          <textarea id="sourceEditor" class="source-editor" placeholder="Write your blueprint…"><%= post.body || '' %></textarea>
+          
+          <!-- Quill Editor Container -->
+          <div id="quillEditor" style="display:none;"></div>
+          
         </div>
-        <div class="editor-pane">
+        <div class="editor-pane" id="previewPaneContainer">
           <div class="editor-label">👁 Preview</div>
-          <div class="preview-pane" id="preview"></div>
+          <div class="preview-pane" id="preview"><span class="preview-placeholder">Your blueprint preview will appear here…</span></div>
         </div>
       </div>
 
@@ -66,14 +96,130 @@
 </main>
 <footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 <script src="/js/main.js"></script>
 <script>
-  const body = document.getElementById('body');
+  // DOM Elements
+  const bodyInput = document.getElementById('body');
+  const sourceEditor = document.getElementById('sourceEditor');
+  const quillContainer = document.getElementById('quillEditor');
   const preview = document.getElementById('preview');
+  const previewPaneContainer = document.getElementById('previewPaneContainer');
+  const editorHeader = document.getElementById('editorHeader');
+  const formatBtns = document.querySelectorAll('.format-btn');
+  const formatInput = document.getElementById('formatInput');
+  const postForm = document.getElementById('postForm');
+
+  // Markdown Setup
   marked.setOptions({ breaks: true, gfm: true });
-  function updatePreview() { preview.innerHTML = marked.parse(body.value || ''); }
-  body.addEventListener('input', updatePreview);
-  updatePreview();
+  
+  // Quill Setup
+  const quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    placeholder: 'Write your blueprint with rich formatting...',
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        ['blockquote', 'code-block'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['link', 'clean']
+      ]
+    }
+  });
+
+  // Load initial Rich Text
+  if ('<%= post.format %>' === 'richtext') {
+    quill.root.innerHTML = bodyInput.value;
+  }
+
+  // State
+  let currentFormat = '<%= post.format %>';
+
+  function updatePreview() {
+    if (currentFormat === 'markdown') {
+      const md = sourceEditor.value.trim();
+      preview.innerHTML = md ? marked.parse(md) : '<span class="preview-placeholder">Markdown preview will appear here…</span>';
+    } 
+    else if (currentFormat === 'latex') {
+      const text = sourceEditor.value.trim();
+      if (!text) {
+        preview.innerHTML = '<span class="preview-placeholder">LaTeX preview will appear here…</span>';
+      } else {
+        const escaped = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        preview.innerHTML = `<div style="white-space: pre-wrap">${escaped}</div>`;
+        if (window.renderMathInElement) {
+          renderMathInElement(preview, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+          });
+        }
+      }
+    }
+  }
+
+  function setFormat(newFormat, bypassConfirm = false) {
+    if (!bypassConfirm && currentFormat !== newFormat && sourceEditor.value.trim() !== '') {
+      const confirmed = confirm("Switching formats won't cleanly convert existing content. Continue?");
+      if (!confirmed) {
+         formatBtns.forEach(b => b.classList.remove('active'));
+         document.querySelector(`[data-format="${currentFormat}"]`).classList.add('active');
+         formatInput.value = currentFormat;
+         return;
+      }
+    }
+
+    currentFormat = newFormat;
+    formatInput.value = currentFormat;
+    
+    formatBtns.forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-format="${newFormat}"]`).classList.add('active');
+    
+    if (currentFormat === 'richtext') {
+      sourceEditor.style.display = 'none';
+      quillContainer.parentElement.querySelector('.ql-toolbar').style.display = 'block';
+      quillContainer.style.display = 'block';
+      previewPaneContainer.style.display = 'none';
+      editorHeader.innerText = '🖋 Rich Text';
+      document.querySelector('.editor-wrap').style.gridTemplateColumns = '1fr';
+      if (!bypassConfirm) quill.clipboard.dangerouslyPasteHTML(sourceEditor.value);
+    } else {
+      sourceEditor.style.display = 'block';
+      quillContainer.parentElement.querySelector('.ql-toolbar').style.display = 'none';
+      quillContainer.style.display = 'none';
+      previewPaneContainer.style.display = 'flex';
+      editorHeader.innerText = currentFormat === 'latex' ? '🧮 LaTeX Source' : '✏️ Markdown';
+      document.querySelector('.editor-wrap').style.gridTemplateColumns = '';
+      updatePreview();
+      if (!bypassConfirm) sourceEditor.value = bodyInput.value;
+    }
+  }
+
+  // Handle format switching
+  formatBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      setFormat(btn.dataset.format);
+    });
+  });
+
+  // Listeners
+  sourceEditor.addEventListener('input', () => {
+    bodyInput.value = sourceEditor.value;
+    updatePreview();
+  });
+  
+  quill.on('text-change', () => {
+    bodyInput.value = quill.root.innerHTML;
+  });
+
+  // Initialize UI based on saved format
+  setFormat(currentFormat, true);
 </script>
 </body>
 </html>

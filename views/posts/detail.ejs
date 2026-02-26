@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <% if (post.format === 'latex') { %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <% } %>
   <% let extraCss = `
   <style>
     .post-body { font-family: var(--font-serif); font-size: 1.1rem; line-height: 1.85; color: var(--text); }
@@ -112,5 +115,11 @@
 <footer class="site-footer"><div class="container"><p>© 2026 <strong>ThinkNote</strong></p></div></footer>
 <script src="/js/main.js"></script>
 <script src="/js/post.js"></script>
+<% if (post.format === 'latex') { %>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" onload="console.log('katex loaded')"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" 
+          onload="renderMathInElement(document.querySelector('.post-body'), { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false });">
+  </script>
+<% } %>
 </body>
 </html>

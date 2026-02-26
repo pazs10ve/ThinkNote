@@ -3,6 +3,7 @@ import Like from '../models/Like.js';
 import Bookmark from '../models/Bookmark.js';
 import { generateSlug } from '../services/slugService.js';
 import { marked } from 'marked';
+import DOMPurify from 'isomorphic-dompurify';
 import { uploadToCloudinary } from '../services/cloudinaryService.js';
 
 export const showCreate = (req, res) => {
@@ -11,9 +12,17 @@ export const showCreate = (req, res) => {
 
 export const create = async (req, res) => {
   try {
-    const { title, body, tags, status } = req.body;
+    let { title, body, tags, status, format } = req.body;
     if (!title || !body) throw new Error('Title and body are required.');
     const slug = generateSlug(title);
+    
+    // Default format
+    format = ['markdown', 'richtext', 'latex'].includes(format) ? format : 'markdown';
+    
+    // Sanitize rich text exactly
+    if (format === 'richtext') {
+      body = DOMPurify.sanitize(body, { USE_PROFILES: { html: true } });
+    }
     
     let coverImage = '';
     if (req.file) {
@@ -26,6 +35,7 @@ export const create = async (req, res) => {
       author: res.locals.currentUser._id,
       title, body, slug, coverImage,
       tags: tagArray,
+      format,
       status: status === 'published' ? 'published' : 'draft',
     });
     res.redirect(`/post/${post.slug}`);
@@ -51,7 +61,23 @@ export const detail = async (req, res) => {
       return res.render('error', { message: 'This architectural sketch is private.', code: 403 });
     }
 
-    const htmlBody = marked.parse(post.body);
+    // Determine how to render the body based on format
+    let htmlBody = '';
+    if (post.format === 'markdown') {
+      htmlBody = marked.parse(post.body);
+    } else if (post.format === 'richtext') {
+      htmlBody = post.body; // already sanitized by DOMPurify on save
+    } else if (post.format === 'latex') {
+      // Escape HTML and retain line breaks
+      htmlBody = post.body
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/\n/g, "<br>");
+    }
+
     let userLiked = false, userBookmarked = false, userFollowsAuthor = false;
 
     if (res.locals.currentUser) {
@@ -96,9 +122,22 @@ export const update = async (req, res) => {
     if (post.author.toString() !== res.locals.currentUser._id.toString())
       return res.render('error', { message: 'Access denied: You are not the commissioned architect.', code: 403 });
 
-    const { title, body, tags, status } = req.body;
+    let { title, body, tags, status, format } = req.body;
     post.title = title || post.title;
-    post.body = body || post.body;
+    
+    // Format parsing
+    if (format && ['markdown', 'richtext', 'latex'].includes(format)) {
+      post.format = format;
+    }
+    
+    if (body) {
+      if (post.format === 'richtext') {
+        post.body = DOMPurify.sanitize(body, { USE_PROFILES: { html: true } });
+      } else {
+        post.body = body;
+      }
+    }
+    
     post.tags = tags ? tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean).slice(0, 5) : post.tags;
     post.status = status === 'published' ? 'published' : 'draft';
     
