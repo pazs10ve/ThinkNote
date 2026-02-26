@@ -75,15 +75,3 @@
     </div>
   </div>
 </nav>
-<script>
-  // Dropdown toggle
-  const avatarBtn = document.getElementById('avatarBtn');
-  const dropdownMenu = document.getElementById('dropdownMenu');
-  if (avatarBtn && dropdownMenu) {
-    avatarBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      dropdownMenu.classList.toggle('open');
-    });
-    document.addEventListener('click', () => dropdownMenu.classList.remove('open'));
-  }
-</script>

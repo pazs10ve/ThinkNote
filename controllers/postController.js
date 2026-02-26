@@ -3,6 +3,7 @@ import Like from '../models/Like.js';
 import Bookmark from '../models/Bookmark.js';
 import { generateSlug } from '../services/slugService.js';
 import { marked } from 'marked';
+import { uploadToCloudinary } from '../services/cloudinaryService.js';
 
 export const showCreate = (req, res) => {
   res.render('posts/create', { title: 'Draft Blueprint', error: null, values: {} });
@@ -13,7 +14,12 @@ export const create = async (req, res) => {
     const { title, body, tags, status } = req.body;
     if (!title || !body) throw new Error('Title and body are required.');
     const slug = generateSlug(title);
-    const coverImage = req.file ? `/uploads/covers/${req.file.filename}` : '';
+    
+    let coverImage = '';
+    if (req.file) {
+      coverImage = await uploadToCloudinary(req.file.path, 'thinknote/covers');
+    }
+    
     const tagArray = tags ? tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean).slice(0, 5) : [];
 
     const post = await Post.create({
@@ -95,7 +101,11 @@ export const update = async (req, res) => {
     post.body = body || post.body;
     post.tags = tags ? tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean).slice(0, 5) : post.tags;
     post.status = status === 'published' ? 'published' : 'draft';
-    if (req.file) post.coverImage = `/uploads/covers/${req.file.filename}`;
+    
+    if (req.file) {
+      post.coverImage = await uploadToCloudinary(req.file.path, 'thinknote/covers');
+    }
+    
     await post.save();
     res.redirect(`/post/${post.slug}`);
   } catch (err) {

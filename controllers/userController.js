@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Post from '../models/Post.js';
+import { uploadToCloudinary } from '../services/cloudinaryService.js';
 
 export const profile = async (req, res) => {
   try {
@@ -79,11 +80,17 @@ export const updateSettings = async (req, res) => {
 export const updateAvatar = async (req, res) => {
   try {
     if (!req.file) throw new Error('No file uploaded.');
+    
+    // Upload the local file to Cloudinary
+    const secureUrl = await uploadToCloudinary(req.file.path, 'thinknote/avatars');
+    
     const user = await User.findById(res.locals.currentUser._id);
-    user.avatarUrl = `/uploads/avatars/${req.file.filename}`;
+    user.avatarUrl = secureUrl;
     await user.save();
     res.redirect('/settings');
   } catch (err) {
+    // If the error is 'upload failure' (or any other), show it to the user.
+    // The cloudinaryService already handles local file cleanup.
     res.render('settings', { title: 'Settings', error: err.message, success: null });
   }
 };
